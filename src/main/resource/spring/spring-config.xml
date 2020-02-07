@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:mvc="http://www.springframework.org/schema/mvc"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xmlns:tx="http://www.springframework.org/schema/tx"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/context
+        http://www.springframework.org/schema/context/spring-context.xsd
+        http://www.springframework.org/schema/aop
+        http://www.springframework.org/schema/aop/spring-aop.xsd
+        http://www.springframework.org/schema/mvc
+        http://www.springframework.org/schema/mvc/spring-mvc.xsd
+        http://www.springframework.org/schema/tx
+        http://www.springframework.org/schema/tx/spring-tx.xsd">
+    <!-- 开启包扫描，扫描com.sunline下所有注解-->
+    <context:component-scan base-package="com.sunline"/>
+    <!-- 如果mvc是注解配置，需要开启mvc-->
+    <!--    <mvc:annotation-driven/>-->
+    <!-- 引入jdbc参数-->
+    <!-- 将文件中配置的数据加载进ioc容器-->
+    <context:property-placeholder location="classpath:oracle.properties,classpath:mysql.properties"
+                                  ignore-resource-not-found="true"/>
+
+    <!-- 引入spring配置-->
+    <import resource="spring-mvc.xml"/>
+    <import resource="springMybatis-config.xml"/>
+
+    <!--事务管理器 -->
+    <bean id="txManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+        <property name="dataSource" ref="oracleDataSource"/>
+    </bean>
+
+    <!-- 启用AOP -->
+    <aop:aspectj-autoproxy/>
+    <!--注解配置开启事务 -->
+    <tx:annotation-driven transaction-manager="txManager"/>
+    <!--    事务配置-->
+    <!--    <tx:advice id="txAdvice" transaction-manager="txManager">-->
+    <!--        &lt;!&ndash; the transactional semantics... &ndash;&gt;-->
+    <!--        <tx:attributes>-->
+    <!--            &lt;!&ndash; all methods starting with 'get' are read-only &ndash;&gt;-->
+    <!--            <tx:method name="get*"-->
+    <!--                       isolation="DEFAULT"-->
+    <!--                       no-rollback-for=""-->
+    <!--                       propagation="MANDATORY"-->
+    <!--                       rollback-for=""-->
+    <!--                       timeout="-1"-->
+    <!--                       read-only="true"/>-->
+    <!--            &lt;!&ndash; other methods use the default transaction settings (see below) &ndash;&gt;-->
+    <!--            <tx:method name="*"/>-->
+    <!--        </tx:attributes>-->
+    <!--    </tx:advice>-->
+    <!--    &lt;!&ndash; 事务的切入点表达式&ndash;&gt;-->
+    <!--    <aop:config>-->
+    <!--        <aop:pointcut id="fooServiceOperation" expression="execution(* com.sunline.service.*.*(..))"/>-->
+    <!--        <aop:advisor advice-ref="txAdvice" pointcut-ref="fooServiceOperation"/>-->
+    <!--    </aop:config>-->
+    <!--    <tx:annotation-driven transaction-manager="txManager"/>-->
+
+</beans>

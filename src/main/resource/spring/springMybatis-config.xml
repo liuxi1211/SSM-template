@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="
+	http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.0.xsd">
+
+    <!-- 配置SqlSessionFactoryBean,系统底层会通过
+                    此Bean对象创建SqlSessionFactory -->
+    <bean id="sqlSessionFactory"
+          class="org.mybatis.spring.SqlSessionFactoryBean">
+        <!-- 注入数据源对象 -->
+        <property name="DataSource" ref="mysqlDataSource"/>
+        <property name="configLocation" value="classpath:/spring/mybatis-config.xml"/><!-- mybatis的配置文件 -->
+        <!-- 配置映射文件所在路径 -->
+        <property name="MapperLocations"
+                  value="classpath*:mapper/*.xml"></property>
+        <property name="typeAliasesPackage"
+                  value="com.sunline.vo"/>  <!-- 别名包 自动扫描包下面的所有类，当作别名，有可能出现重复，在重复类上使用@Alias("新的名字") 注解消除重名问题-->
+    </bean>
+    <!-- 整合MapperScannerConfigurer对象，通过此对象扫描指定包中
+      dao/mapper接口,然后底层会通过代理机制，为接口创建一个实现类
+              对象(这个对象我们通常又可以理解为代理对象)-->
+    <bean id="daoScanner"
+          class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+        <property name="BasePackage" value="com.**.dao"/>
+        <!-- 当spring容器只有一个sqlSessionFactory时如下配置可以不写 -->
+        <property name="SqlSessionFactoryBeanName"
+                  value="sqlSessionFactory"/>
+    </bean>
+
+    <!-- 整合druid数据源对象 (本质上是一个连接池)-->
+    <bean id="mysqlDataSource" class="com.alibaba.druid.pool.DruidDataSource">
+        <property name="url" value="${mysql.url}"/>
+        <property name="username" value="${mysql.username}"/>
+        <property name="password" value="${mysql.password}"/>
+        <property name="driverClassName" value="${mysql.driverClassName}"/>
+        <!-- 配置初始化大小、最小、最大 -->
+        <property name="initialSize" value="${mysql.initialSize}"/>
+        <!-- 配置从连接池获取连接等待超时的时间 -->
+        <property name="maxWait" value="${mysql.maxWait}"/>
+        <property name="maxActive" value="${mysql.maxActive}"/>
+    </bean>
+
+    <bean id="oracleDataSource" class="com.alibaba.druid.pool.DruidDataSource">
+        <property name="url" value="${oracle.url}"/>
+        <property name="username" value="${oracle.username}"/>
+        <property name="password" value="${oracle.password}"/>
+        <property name="driverClassName" value="${oracle.driverClassName}"/>
+        <!-- 配置初始化大小、最小、最大 -->
+        <property name="initialSize" value="${oracle.initialSize}"/>
+        <!-- 配置从连接池获取连接等待超时的时间 -->
+        <property name="maxWait" value="${oracle.maxWait}"/>
+        <property name="maxActive" value="${oracle.maxActive}"/>
+    </bean>
+</beans>
+
+
